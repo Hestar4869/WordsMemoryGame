@@ -58,12 +58,12 @@ public class UserDAOImpl extends BaseDAO implements UserDAO
     }
 
     @Override
-    public void Insert(User user) throws Exception
+    public void insert(User user) throws Exception
     {
         //建立连接
         Connection connection=BaseDAO.getConnection();
         //要执行的sql语句
-        String sql="INSERT into USER (username,password) VALUES "+'('+user.getUsername()+","+user.getPassword()+')';
+        String sql=String.format("INSERT into USER (username,password) VALUES ('%s','%s')",user.getUsername(),user.getPassword());
         PreparedStatement statement=connection.prepareStatement(sql);
         statement.execute();
     }

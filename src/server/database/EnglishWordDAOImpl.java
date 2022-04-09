@@ -1,7 +1,9 @@
 package server.database;
 
 import server.database.DAO.EnglishWordDAO;
+import server.database.DAO.UserDAO;
 import server.database.data.EnglishWord;
+import server.database.data.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,4 +39,15 @@ public class EnglishWordDAOImpl extends BaseDAO implements EnglishWordDAO
         return wordList;
     }
 
+    //UserDAO功能测试
+    //TODO 用户唯一性检验
+    public static void main(String[] args) throws Exception
+    {
+        UserDAO userDAO=new server.database.UserDAOImpl();
+        userDAO.insert(new User("rt","rt"));
+        List<User> userList=userDAO.getAll();
+        for (User i:userList){
+            System.out.println(i.getUsername()+" "+i.getPassword());
+        }
+    }
 }

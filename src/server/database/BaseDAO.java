@@ -1,5 +1,8 @@
 package server.database;
 
+import server.database.DAO.EnglishWordDAO;
+import server.database.data.EnglishWord;
+
 import java.sql.*;
 
 /**
@@ -14,7 +17,7 @@ public class BaseDAO
     //JDBC数据库驱动名
     private static String driver = "com.mysql.jdbc.Driver";
     //数据库地址
-    private static String url = "jdbc:mysql://127.0.0.1:3306/word_memory_game";
+    private static String url = "jdbc:mysql://127.0.0.1:3306/words_memory_game?serverTimezone=GMT%2B8";
     //连接数据库的账号密码
     private static String user = "root";
     private static String password = "root";
@@ -87,6 +90,16 @@ public class BaseDAO
             }
         }
         return 0;
+    }
+
+    public void insert(EnglishWord word) throws Exception
+    {
+        //建立连接
+        Connection connection=BaseDAO.getConnection();
+        //要执行的sql语句
+        String sql=String.format("INSERT into USER (username,password) VALUES (%s,%s,%s)",word.getWord(),word.getWordDes(),word.getWordClass());
+        PreparedStatement statement=connection.prepareStatement(sql);
+        statement.execute();
     }
 }
 

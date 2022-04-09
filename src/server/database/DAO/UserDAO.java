@@ -17,5 +17,5 @@ public interface UserDAO
     public String findPasswordByUsername(String username) throws Exception;
 
     //插入
-    public void Insert(User user) throws Exception;
+    public void insert(User user) throws Exception;
 }
