@@ -1,14 +1,11 @@
 package server.database;
 
-import server.database.DAO.EnglishWordDAO;
-import server.database.DAO.UserDAO;
-import server.database.data.EnglishWord;
+import server.database.dao.UserDAO;
 import server.database.data.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +48,13 @@ public class UserDAOImpl extends BaseDAO implements UserDAO
         //建立连接
         Connection connection=BaseDAO.getConnection();
         //要执行的sql语句
-        String sql="SELECT password FROM USER WHERE username="+username;
+        String sql="SELECT password FROM USER WHERE username="+"\""+username+"\"";
         PreparedStatement statement=connection.prepareStatement(sql);
         ResultSet resultSet=statement.executeQuery();
-        return resultSet.getString("password");
+        while (resultSet.next()){
+            return resultSet.getString("password");
+        }
+        return "";
     }
 
     @Override

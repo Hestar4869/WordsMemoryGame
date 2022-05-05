@@ -1,8 +1,5 @@
 package server.database;
 
-import server.database.DAO.EnglishWordDAO;
-import server.database.data.EnglishWord;
-
 import java.sql.*;
 
 /**
@@ -92,14 +89,8 @@ public class BaseDAO
         return 0;
     }
 
-    public void insert(EnglishWord word) throws Exception
-    {
-        //建立连接
-        Connection connection=BaseDAO.getConnection();
-        //要执行的sql语句
-        String sql=String.format("INSERT into USER (username,password) VALUES (%s,%s,%s)",word.getWord(),word.getWordDes(),word.getWordClass());
-        PreparedStatement statement=connection.prepareStatement(sql);
-        statement.execute();
-    }
+
+
+
 }
 

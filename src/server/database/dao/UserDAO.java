@@ -1,4 +1,4 @@
-package server.database.DAO;
+package server.database.dao;
 
 import server.database.data.User;
 

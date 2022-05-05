@@ -1,4 +1,4 @@
-package server.database.DAO;
+package server.database.dao;
 
 import server.database.data.EnglishWord;
 
@@ -13,4 +13,5 @@ import java.util.List;
 public interface EnglishWordDAO
 {
     public List<EnglishWord> getAll() throws Exception;
+    public void insert(EnglishWord word) throws Exception;
 }

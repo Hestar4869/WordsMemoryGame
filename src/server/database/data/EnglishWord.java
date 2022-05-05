@@ -10,13 +10,11 @@ public class EnglishWord
 {
     private String word;
     private String wordDes;
-    private String wordClass;
 
-    public EnglishWord(String word, String wordDes, String wordClass)
+    public EnglishWord(String word, String wordDes)
     {
         this.word = word;
         this.wordDes = wordDes;
-        this.wordClass = wordClass;
     }
 
     public String getWord()
@@ -39,13 +37,4 @@ public class EnglishWord
         this.wordDes = wordDes;
     }
 
-    public String getWordClass()
-    {
-        return wordClass;
-    }
-
-    public void setWordClass(String wordClass)
-    {
-        this.wordClass = wordClass;
-    }
 }

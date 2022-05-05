@@ -1,7 +1,7 @@
 package server.database;
 
-import server.database.DAO.EnglishWordDAO;
-import server.database.DAO.UserDAO;
+import server.database.dao.EnglishWordDAO;
+import server.database.dao.UserDAO;
 import server.database.data.EnglishWord;
 import server.database.data.User;
 
@@ -33,10 +33,21 @@ public class EnglishWordDAOImpl extends BaseDAO implements EnglishWordDAO
         while (rs.next())
         {
             //拆分出resultSet中的EnglishWord类
-            EnglishWord word = new EnglishWord(rs.getString("word"), rs.getString("word_description"), rs.getString("word_class"));
+            EnglishWord word = new EnglishWord(rs.getString("word"), rs.getString("word_description"));
             wordList.add(word);
         }
         return wordList;
+    }
+
+    @Override
+    public void insert(EnglishWord word) throws Exception
+    {
+        //建立连接
+        Connection connection=BaseDAO.getConnection();
+        //要执行的sql语句
+        String sql=String.format("INSERT into USER (username,password) VALUES (%s,%s)",word.getWord(),word.getWordDes());
+        PreparedStatement statement=connection.prepareStatement(sql);
+        statement.execute();
     }
 
     //UserDAO功能测试
