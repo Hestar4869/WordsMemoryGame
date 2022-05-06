@@ -18,59 +18,25 @@ public class SocketServer
     //生成单例的SocketServer
     private static SocketServer socketServer=new SocketServer();
 
-    private static ServerSocket loginServer;
+    private SocketServer(){
 
-    private SocketServer() {
         try
+
         {
-            loginServer=new ServerSocket(17775);
-            acceptLogin();
+            //开启处理登录信息的线程
+            new Thread(new LoginServerRunnable()).start();
+            //开启处理单词记忆功能的线程
+            new Thread(new GettingMemoryRunnable()).start();
+            new Thread(new UpdateMemoryRunnable()).start();
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
 
+
     }
 
-    private void acceptLogin()
-    {
-        //匿名对象单独开一线程处理登录请求
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                while(true){
-                    try
-                    {
-                        Socket socket=loginServer.accept();
-                        //输入流
-                        InputStream is=socket.getInputStream();
-                        BufferedReader br=new BufferedReader(new InputStreamReader(is));
-                        //输出流
-                        OutputStream os=socket.getOutputStream();
-                        PrintStream ps=new PrintStream(os);
-
-                        //获取从客户端传送的账号密码
-                        String username=br.readLine(),passwd= br.readLine();
-
-                        UserDAO userDAO=new UserDAOImpl();
-                        if(userDAO.findPasswordByUsername(username).equals(passwd))
-                            ps.println("succeed");
-                        else
-                            ps.println("failed");
-
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }).start();
-    }
 
     //对外的获取SocketServer实例的接口
     public static SocketServer getInstance(){

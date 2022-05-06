@@ -1,7 +1,11 @@
 package client.socket;
 
+import server.database.dao.EnglishWordDAO;
+import server.database.data.EnglishWord;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * @className: SocketClient
@@ -14,14 +18,14 @@ public class SocketClient
     private static Socket loginSocket;
 
     /**
-     * @param: username
-     * @param: passwd
+     * @param: username 登录的账号
+     * @param: passwd   登录的密码
      * @description: 根据传入的账号密码，对远端服务器进行请求验证
-     * @return: boolean
+     * @return: boolean 返回是否成功登录
      * @author: HMX
      * @date: --
      */
-    public static boolean login(String username, String passwd) throws Exception{
+    public static boolean loginRequest(String username, String passwd) throws Exception{
         loginSocket=new Socket("127.0.0.1",17775);
         //输入流
         InputStream is=loginSocket.getInputStream();
@@ -45,6 +49,32 @@ public class SocketClient
             return false;
         }
     }
+
+    public static List<EnglishWord> memoryRequest(String username,boolean isMaster) throws Exception
+    {
+        Socket socket=new Socket("127.0.0.1",6667);
+        //输入流
+        InputStream is=socket.getInputStream();
+        BufferedReader br=new BufferedReader(new InputStreamReader(is));
+        //输出流
+        OutputStream os=socket.getOutputStream();
+        PrintStream ps=new PrintStream(os);
+
+        //传送账号以及选择已掌握还是未掌握的记忆单词
+        ps.println(username);
+        ps.println(isMaster);
+        System.out.println("已传送"+username);
+
+        //读取传送回来的List<EnglishWord>类
+        ObjectInputStream ois=new ObjectInputStream(is);
+        List<EnglishWord> words= (List<EnglishWord>) ois.readObject();
+
+        for (EnglishWord word: words)
+        {
+            System.out.println(word.getWord());
+        }
+        return words;
+    }
     public static void main(String[] args) throws Exception
     {
 
@@ -53,6 +83,7 @@ public class SocketClient
 //        Socket socket2 = new Socket("127.0.0.1", 66666);
 //        System.out.println(socket1.getLocalPort() + " " + socket2.getLocalPort());
 //        Thread.sleep(1000);
-        SocketClient.login("root","root");
+        SocketClient.loginRequest("root","root");
+        SocketClient.memoryRequest("root",true);
     }
 }

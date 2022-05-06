@@ -1,12 +1,14 @@
 package server.database.data;
 
+import java.io.Serializable;
+
 /**
  * @author: HMX
  * @className User
  * @description 用于存放数据库user表的数据实体类
  * @date: 2022-04-07 16:33
  */
-public class User
+public class User implements Serializable
 {
     private String username;
     private String password;

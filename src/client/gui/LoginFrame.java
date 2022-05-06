@@ -15,29 +15,31 @@ import java.awt.event.ActionListener;
  */
 public class LoginFrame extends JFrame implements ActionListener
 {
-    final int WIDTH=300;
-    final int HEIGHT=229;
-    private FlowLayout flowLayout=new FlowLayout(FlowLayout.CENTER,20,20);
+    private String username;
+    final int WIDTH = 300;
+    final int HEIGHT = 229;
+    private FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER, 20, 20);
 
     //登录界面的元素
-    private JLabel userLabel=new JLabel("输入账号");
-    private JTextField userText=new JTextField(20);
-    private JLabel passwdLabel=new JLabel("输入密码");
-    private JPasswordField passwdText=new JPasswordField(20);
+    private JLabel userLabel = new JLabel("输入账号");
+    private JTextField userText = new JTextField(20);
+    private JLabel passwdLabel = new JLabel("输入密码");
+    private JPasswordField passwdText = new JPasswordField(20);
 
-    private JButton loginButton =new JButton("登录");
-    private JButton exitButton=new JButton("取消");
+    private JButton loginButton = new JButton("登录");
+    private JButton exitButton = new JButton("取消");
 
-    private JPanel loginPanel =new JPanel();
-    private JPanel textPanel =new JPanel();
-    private JPanel passwdPanel=new JPanel();
-    private JPanel buttonPanel=new JPanel();
+    private JPanel loginPanel = new JPanel();
+    private JPanel textPanel = new JPanel();
+    private JPanel passwdPanel = new JPanel();
+    private JPanel buttonPanel = new JPanel();
 
     //游戏界面的元素
-    private JButton gameButton=new JButton("开始匹配");
-    private JButton wordButton=new JButton("单词记忆");
-    private JLabel menuLabel=new JLabel();
-    private JPanel menuPanel=new JPanel();
+    private JButton gameButton = new JButton("开始匹配");
+    private JButton wordButton = new JButton("单词记忆");
+    private JLabel menuLabel = new JLabel();
+    private JPanel menuPanel = new JPanel();
+
     public LoginFrame() throws HeadlessException
     {
         //给四个按钮添加
@@ -59,7 +61,7 @@ public class LoginFrame extends JFrame implements ActionListener
         buttonPanel.add(loginButton);
         buttonPanel.add(exitButton);
 
-        loginPanel.setLayout(new BoxLayout(loginPanel,BoxLayout.Y_AXIS));
+        loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
 
         //填充透明盒子
         loginPanel.add(Box.createVerticalGlue());
@@ -80,17 +82,17 @@ public class LoginFrame extends JFrame implements ActionListener
         menuPanel.add(Box.createVerticalGlue());
         menuPanel.add(wordButton);
         menuPanel.add(Box.createVerticalGlue());
-        menuPanel.setLayout(new BoxLayout(menuPanel,BoxLayout.Y_AXIS));
+        menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
 
 
         //Dimension封装了电脑屏幕的宽度和高度
         //获取屏幕宽度和高度，使窗口位于屏幕正中间
-        Dimension width=Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation((int)(width.getWidth()-WIDTH)/2,(int)(width.getHeight()-HEIGHT)/2);
+        Dimension width = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation((int) (width.getWidth() - WIDTH) / 2, (int) (width.getHeight() - HEIGHT) / 2);
 
         //设置当前显示的是登录面板
         this.add(loginPanel);
-        this.setSize(WIDTH,HEIGHT);
+        this.setSize(WIDTH, HEIGHT);
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("登录界面");
@@ -99,52 +101,50 @@ public class LoginFrame extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource()== loginButton){
-            //this.remove(loginPanel);
-
-            //获取登录账号
-            String username=userText.getText() , passwd= String.valueOf(passwdText.getPassword());
-
-            //用SocketClient.login()函数尝试登录
-            try
+        try
+        {
+            if (e.getSource() == loginButton)
             {
-                if(SocketClient.login(username,passwd)){
+                //获取登录账号
+                String username = userText.getText(), passwd = String.valueOf(passwdText.getPassword());
 
-//                    this.setTitle("用户"+username+"您已成功登录");
+                //用SocketClient.login()函数尝试登录
+                if (SocketClient.loginRequest(username, passwd)) {
+
+                    //                    this.setTitle("用户"+username+"您已成功登录");
                     //切换至游戏菜单
-                    menuLabel.setText("用户"+username+"您已成功登录");
+                    this.username=username;
+                    menuLabel.setText("用户" + username + "您已成功登录");
                     this.setTitle("菜单");
                     loginPanel.setVisible(false);
                     this.add(menuPanel);
                     menuPanel.setVisible(true);
                 }
-                else{
-                    JOptionPane.showMessageDialog(this,"登录失败，账号或密码错误");
+                else {
+                    JOptionPane.showMessageDialog(this, "登录失败，账号或密码错误");
                 }
-
             }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
+            else if (e.getSource() == exitButton){
+                //退出
+                System.exit(0);
             }
-
-
-
+            else if (e.getSource() == gameButton){
+                //跳转至游戏界面
+            }
+            else if (e.getSource() == wordButton){
+                //跳转至单词记忆界面
+                WordMemoryFrame wordMemoryFrame=new WordMemoryFrame(username);
+                this.setVisible(false);
+            }
         }
-        else if(e.getSource()==exitButton){
-            //退出
-            System.exit(0);
-        }
-        else if(e.getSource()==gameButton){
-            //跳转至游戏界面
-        }
-        else if (e.getSource()==wordButton){
-            //跳转至单词记忆界面
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
         }
     }
 
     public static void main(String[] args)
     {
-        LoginFrame loginFrame=new LoginFrame();
+        LoginFrame loginFrame = new LoginFrame();
     }
 }

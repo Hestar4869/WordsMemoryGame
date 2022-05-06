@@ -1,12 +1,14 @@
 package server.database.data;
 
+import java.io.Serializable;
+
 /**
  * @author: HMX
  * @className: EnglishWord
  * @description: 用于存放数据库english_word_list表的数据实体类
  * @date: 2022-04-07 16:52
  */
-public class EnglishWord
+public class EnglishWord implements Serializable
 {
     private String word;
     private String wordDes;

@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * @className: EnglishWordDAOImpl
- * @description: TODO 类描述
+ * @description: EnglishWordDAO接口实现
  * @author: HMX
  * @date: 2022-04-07 17:07
  */
@@ -37,6 +37,33 @@ public class EnglishWordDAOImpl extends BaseDAO implements EnglishWordDAO
             wordList.add(word);
         }
         return wordList;
+    }
+
+    /**
+     * @param: username
+     * @param: isMaster
+     * @description: 根据username和isMaster查找该用户已掌握或未掌握的单词
+     * @return: java.util.List<server.database.data.User>
+     * @author: HMX
+     * @date: --
+     */
+    @Override
+    public List<EnglishWord> findMemoryByUsername(String username, boolean isMaster) throws Exception
+    {
+        //建立连接
+        Connection connection = BaseDAO.getConnection();
+        int boolInt=isMaster?1:0;
+        //要执行的sql语句
+        String sql = String.format("SELECT a.word,a.word_description FROM english_word a,memory b WHERE a.word=b.word AND b.username='%s' AND b.is_master=%d", username, boolInt);
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery();
+        List<EnglishWord> words = new ArrayList<>();
+        while (rs.next())
+        {
+            EnglishWord word = new EnglishWord(rs.getString("word"), rs.getString("word_description"));
+            words.add(word);
+        }
+        return words;
     }
 
     @Override
