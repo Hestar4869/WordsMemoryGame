@@ -1,8 +1,5 @@
 package server.socket;
 
-import server.database.dao.UserDAO;
-import server.database.UserDAOImpl;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,8 +23,10 @@ public class SocketServer
             //开启处理登录信息的线程
             new Thread(new LoginServerRunnable()).start();
             //开启处理单词记忆功能的线程
-            new Thread(new GettingMemoryRunnable()).start();
             new Thread(new UpdateMemoryRunnable()).start();
+            new Thread(new SendMemoryRunnable()).start();
+            //匹配游戏
+            matchSocket();
         }
         catch (IOException e)
         {
@@ -43,7 +42,18 @@ public class SocketServer
         return  socketServer;
     }
 
-
+    public void matchSocket() throws IOException
+    {
+        ServerSocket ss=new ServerSocket(6669);
+        Socket socket1,socket2;
+        while (true){
+            // 匹配两个客户端
+            socket1=ss.accept();
+            socket2=ss.accept();
+            //传出两个客户端，让它们匹配一场游戏
+            new Thread(new GameRunnable(socket1,socket2)).start();
+        }
+    }
 
     void CreateThread(Object lock) throws Exception
     {

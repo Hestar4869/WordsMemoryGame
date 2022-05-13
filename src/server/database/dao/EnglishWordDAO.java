@@ -2,6 +2,7 @@ package server.database.dao;
 
 import server.database.data.EnglishWord;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -16,6 +17,6 @@ public interface EnglishWordDAO
 
     //根据用户名查找Memory表，根据isMaster参数判断查找的已掌握或未掌握参数
     public List<EnglishWord> findMemoryByUsername(String username, boolean isMaster) throws Exception;
-
+    public EnglishWord findWordById(int id) throws Exception;
     public void insert(EnglishWord word) throws Exception;
 }

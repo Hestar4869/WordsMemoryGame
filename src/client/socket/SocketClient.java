@@ -1,7 +1,7 @@
 package client.socket;
 
-import server.database.dao.EnglishWordDAO;
 import server.database.data.EnglishWord;
+import server.database.data.Memory;
 
 import java.io.*;
 import java.net.Socket;
@@ -9,71 +9,137 @@ import java.util.List;
 
 /**
  * @className: SocketClient
- * @description: 游戏客户端,单例模式，Socket实现
+ * @description: 游戏客户端, 单例模式，Socket实现
  * @author: HMX
  * @date: 2022-04-09 15:07
  */
 public class SocketClient
 {
-    private static Socket loginSocket;
+    private Socket socket;
+    private String mUsername;
+    private String pUsername;
+    private BufferedReader br = null;
+    private PrintStream ps = null;
+    private ObjectInputStream ois = null;
 
-    /**
-     * @param: username 登录的账号
-     * @param: passwd   登录的密码
-     * @description: 根据传入的账号密码，对远端服务器进行请求验证
-     * @return: boolean 返回是否成功登录
-     * @author: HMX
-     * @date: --
-     */
-    public static boolean loginRequest(String username, String passwd) throws Exception{
-        loginSocket=new Socket("127.0.0.1",17775);
+
+
+    public SocketClient(String mUsername) throws Exception
+    {
+        this.mUsername = mUsername;
+        matchRequest();
+    }
+
+    //匹配用户
+    public boolean matchRequest() throws Exception {
+        socket = new Socket("127.0.0.1", 6669);
+        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        ps = new PrintStream(socket.getOutputStream());
+        ois = new ObjectInputStream(socket.getInputStream());
+
+        ps.println(mUsername);
+        String msg = br.readLine();
+        System.out.println(msg);
+        if (msg.equals("匹配成功"))
+        {
+            //获取对手名字
+            pUsername = br.readLine();
+            System.out.println("你匹配的对手是：" + pUsername);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //单词获取
+    public EnglishWord getWord() throws Exception
+    {
+
+        ps.println("word");
+        EnglishWord word = (EnglishWord) ois.readObject();
+        return word;
+    }
+
+    public String getpUsername()
+    {
+        return pUsername;
+    }
+
+    //主动结束游戏
+    public void endGame(){
+        ps.println("over");
+    }
+
+    //根据传入的账号密码，对远端服务器进行请求验证
+    public static boolean loginRequest(String username, String passwd) throws Exception {
+        Socket loginSocket = new Socket("127.0.0.1", 17775);
         //输入流
-        InputStream is=loginSocket.getInputStream();
-        BufferedReader br=new BufferedReader(new InputStreamReader(is));
+        InputStream is = loginSocket.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         //输出流
-        OutputStream os=loginSocket.getOutputStream();
-        PrintStream ps=new PrintStream(os);
+        OutputStream os = loginSocket.getOutputStream();
+        PrintStream ps = new PrintStream(os);
 
         //传送账号密码
         ps.println(username);
         ps.println(passwd);
 
         //读取信息
-        String info= br.readLine();
-        if(info.equals("succeed")){
+        String info = br.readLine();
+        if (info.equals("succeed"))
+        {
             System.out.println("登录成功");
             return true;
         }
-        else{
+        else
+        {
             System.out.println("账号或密码错误");
             return false;
         }
     }
 
-    public static List<EnglishWord> memoryRequest(String username,boolean isMaster) throws Exception
-    {
-        Socket socket=new Socket("127.0.0.1",6667);
+    //从远端获取已掌握或未掌握的单词
+    public static List<EnglishWord> getMemoryRequest(String username, boolean isMaster) throws Exception {
+        Socket socket = new Socket("127.0.0.1", 6667);
         //输入流
-        InputStream is=socket.getInputStream();
-        BufferedReader br=new BufferedReader(new InputStreamReader(is));
+        InputStream is = socket.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         //输出流
-        OutputStream os=socket.getOutputStream();
-        PrintStream ps=new PrintStream(os);
+        OutputStream os = socket.getOutputStream();
+        PrintStream ps = new PrintStream(os);
 
         //传送账号以及选择已掌握还是未掌握的记忆单词
         ps.println(username);
         ps.println(isMaster);
-        System.out.println("已传送"+username);
+        System.out.println("已传送" + username);
 
         //读取传送回来的List<EnglishWord>类
-        ObjectInputStream ois=new ObjectInputStream(is);
-        List<EnglishWord> words= (List<EnglishWord>) ois.readObject();
+        ObjectInputStream ois = new ObjectInputStream(is);
+        List<EnglishWord> words = (List<EnglishWord>) ois.readObject();
 
-        for (EnglishWord word: words)
+        for (EnglishWord word : words)
         {
             System.out.println(word.getWord());
         }
         return words;
+    }
+
+    //传送已掌握或未掌握的单词给远端
+    public static void sendMemoryRequest(List<Memory> memories) throws IOException
+    {
+        Socket socket = new Socket("127.0.0.1", 16668);
+        //输入流
+        InputStream is = socket.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        //输出流
+        OutputStream os = socket.getOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ObjectOutputStream oos=new ObjectOutputStream(os);
+
+        //传送List对象
+        oos.writeObject(memories);
     }
     public static void main(String[] args) throws Exception
     {
@@ -83,7 +149,24 @@ public class SocketClient
 //        Socket socket2 = new Socket("127.0.0.1", 66666);
 //        System.out.println(socket1.getLocalPort() + " " + socket2.getLocalPort());
 //        Thread.sleep(1000);
-        SocketClient.loginRequest("root","root");
-        SocketClient.memoryRequest("root",true);
+//        SocketClient.loginRequest("root","root");
+//        SocketClient.memoryRequest("root",true)
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+//                    SocketClient.matchRequest("hmx");
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }).start();
+
+//        SocketClient.matchRequest("cjq");
     }
 }

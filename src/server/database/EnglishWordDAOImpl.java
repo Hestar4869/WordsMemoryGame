@@ -8,6 +8,7 @@ import server.database.data.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +65,23 @@ public class EnglishWordDAOImpl extends BaseDAO implements EnglishWordDAO
             words.add(word);
         }
         return words;
+    }
+
+    @Override
+    public EnglishWord findWordById(int id) throws Exception
+    {
+        //建立连接
+        Connection connection = BaseDAO.getConnection();
+        //要执行的sql语句
+        String sql = "SELECT word,word_description FROM english_word WHERE id=" + "\"" + id + "\"";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next())
+        {
+            EnglishWord word=new EnglishWord(resultSet.getString("word"),resultSet.getString("word_description"));
+            return word;
+        }
+        return null;
     }
 
     @Override

@@ -40,6 +40,7 @@ public class LoginFrame extends JFrame implements ActionListener
     private JLabel menuLabel = new JLabel();
     private JPanel menuPanel = new JPanel();
 
+    //构造登录页面
     public LoginFrame() throws HeadlessException
     {
         //给四个按钮添加
@@ -98,6 +99,18 @@ public class LoginFrame extends JFrame implements ActionListener
         this.setTitle("登录界面");
     }
 
+    //构造一个已经登录好的登录页面
+    public LoginFrame(String username) throws Exception{
+        this();
+        //切换至游戏菜单
+        this.username=username;
+        menuLabel.setText("用户" + username + "您已成功登录");
+        this.setTitle("菜单");
+        loginPanel.setVisible(false);
+        this.add(menuPanel);
+        menuPanel.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -130,11 +143,15 @@ public class LoginFrame extends JFrame implements ActionListener
             }
             else if (e.getSource() == gameButton){
                 //跳转至游戏界面
+                new GameFrame(username);
+                //释放当前窗口资源
+                this.dispose();
             }
             else if (e.getSource() == wordButton){
                 //跳转至单词记忆界面
                 WordMemoryFrame wordMemoryFrame=new WordMemoryFrame(username);
-                this.setVisible(false);
+                //释放当前窗口资源
+                this.dispose();
             }
         }
         catch (Exception exception)
@@ -145,6 +162,14 @@ public class LoginFrame extends JFrame implements ActionListener
 
     public static void main(String[] args)
     {
-        LoginFrame loginFrame = new LoginFrame();
+        //LoginFrame loginFrame = new LoginFrame();
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                new LoginFrame();
+            }
+        }).start();
     }
 }

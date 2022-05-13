@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.event.WindowListener;
 import java.util.List;
 
 /**
@@ -27,6 +27,7 @@ public class WordMemoryFrame extends JFrame implements ActionListener
 
     private JButton controlBtn=new JButton("已掌握");
     private JButton uncontrolBtn=new JButton("未掌握");
+    private JButton backBtn=new JButton("返回");
     private String username;
 
     //构造函数
@@ -35,10 +36,12 @@ public class WordMemoryFrame extends JFrame implements ActionListener
         //为按钮添加事件
         controlBtn.addActionListener(this);
         uncontrolBtn.addActionListener(this);
+        backBtn.addActionListener(this);
 
         //最上方的标题
         labelPanel.add(controlBtn);
         labelPanel.add(uncontrolBtn);
+        labelPanel.add(backBtn);
         labelPanel.setLayout(new FlowLayout(FlowLayout.CENTER,100,10));
 
         //下方的内容
@@ -64,7 +67,7 @@ public class WordMemoryFrame extends JFrame implements ActionListener
     public void showInfo(boolean isControl) throws Exception
     {
         infoPanel.removeAll();
-        List<EnglishWord> words= SocketClient.memoryRequest(username,isControl);
+        List<EnglishWord> words= SocketClient.getMemoryRequest(username,isControl);
         for (EnglishWord word : words)
         {
             JPanel itemPanel = new JPanel();
@@ -99,6 +102,11 @@ public class WordMemoryFrame extends JFrame implements ActionListener
             {
                 //展示未掌握的单词
                 showInfo(false);
+            }
+            else if(e.getSource()==backBtn){
+                //返回刚才已登录的菜单界面
+                new LoginFrame(username);
+                this.dispose();
             }
         }
         catch (Exception exception)
