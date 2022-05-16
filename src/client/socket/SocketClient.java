@@ -27,7 +27,6 @@ public class SocketClient
     public SocketClient(String mUsername) throws Exception
     {
         this.mUsername = mUsername;
-        matchRequest();
     }
 
     //匹配用户
@@ -38,6 +37,7 @@ public class SocketClient
         ois = new ObjectInputStream(socket.getInputStream());
 
         ps.println(mUsername);
+        //阻塞，等待匹配成功消息
         String msg = br.readLine();
         System.out.println(msg);
         if (msg.equals("匹配成功"))
@@ -47,8 +47,7 @@ public class SocketClient
             System.out.println("你匹配的对手是：" + pUsername);
             return true;
         }
-        else
-        {
+        else {
             return false;
         }
     }

@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 
 /**
  * @className: LoginFrame
- * @description: TODO 类描述
+ * @description: 登录界面外加登录后的菜单
  * @author: HMX
  * @date: 2022-04-25 16:46
  */
@@ -163,6 +163,14 @@ public class LoginFrame extends JFrame implements ActionListener
     public static void main(String[] args)
     {
         //LoginFrame loginFrame = new LoginFrame();
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                new LoginFrame();
+            }
+        }).start();
         new Thread(new Runnable()
         {
             @Override

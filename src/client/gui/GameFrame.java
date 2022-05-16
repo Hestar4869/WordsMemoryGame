@@ -49,48 +49,78 @@ public class GameFrame extends JFrame implements ActionListener
     java.util.List<Memory> memories=new ArrayList<>();
     public GameFrame(String myName) throws Exception
     {
-        this.sc=new SocketClient(myName);
-        this.partnerName=sc.getpUsername();
+        //等待界面
+        WaitingRunnable waitingRunnable=new WaitingRunnable(this);
+        new Thread(waitingRunnable).start();
         //初始化游戏用户
         this.myName = myName;
+        //匹配并初始化界面
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
 
-        //初始化单词
+                try
+                {
+                    sc=new SocketClient(myName);
+                    sc.matchRequest();
+                    partnerName=sc.getpUsername();
+                    gamePanel.add(wordLabel);
+                    myScoreLabel.setText("你当前的成绩为："+myScore);
+                    pScoreLabel.setText("对手当前的成绩为："+partnerScore+" ");
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+
+
+                //初始化单词
 //        wordLabel.setText(word.getWordDes());
 //        wordLabel.setLocation(gamePanel.getX()/2,wordY);
 
-        gamePanel.add(wordLabel);
-        myScoreLabel.setText("你当前的成绩为："+myScore);
-        pScoreLabel.setText("对手当前的成绩为："+partnerScore+" ");
+                //成绩面板初始化
+                scorePanel.setLayout(new BoxLayout(scorePanel,BoxLayout.Y_AXIS));
+                scorePanel.add(new JLabel("当前用户："+myName));
+                scorePanel.add(new JLabel("您的对手："+partnerName));
+                scorePanel.add(new JLabel(" "));
+                scorePanel.add(myScoreLabel);
+                scorePanel.add(pScoreLabel);
 
-        //成绩面板初始化
-        scorePanel.setLayout(new BoxLayout(scorePanel,BoxLayout.Y_AXIS));
-        scorePanel.add(new JLabel("当前用户："+myName));
-        scorePanel.add(new JLabel("您的对手："+partnerName));
-        scorePanel.add(new JLabel(" "));
-        scorePanel.add(myScoreLabel);
-//        scorePanel.add(new JLabel(" "));
-        scorePanel.add(pScoreLabel);
 
-        wordText.addActionListener(this);
-        //背景面板初始化
-        jpl.setLayout(new BorderLayout());
-        jpl.add(wordText,BorderLayout.SOUTH);
-        jpl.add(scorePanel,BorderLayout.EAST);
-        jpl.add(gamePanel,BorderLayout.CENTER);
 
-        //Dimension封装了电脑屏幕的宽度和高度
-        //获取屏幕宽度和高度，使窗口位于屏幕正中间
-        Dimension width=Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation((int)(width.getWidth()-WIDTH)/2,(int)(width.getHeight()-HEIGHT)/2);
+                //背景面板初始化
+                jpl.setLayout(new BorderLayout());
+                jpl.add(wordText,BorderLayout.SOUTH);
+                jpl.add(scorePanel,BorderLayout.EAST);
+                jpl.add(gamePanel,BorderLayout.CENTER);
 
-        this.add(jpl);
-        this.setTitle("游戏界面");
-        this.setSize(WIDTH,HEIGHT);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                //Dimension封装了电脑屏幕的宽度和高度
+                //获取屏幕宽度和高度，使窗口位于屏幕正中间
+                Dimension width=Toolkit.getDefaultToolkit().getScreenSize();
+                setLocation((int)(width.getWidth()-WIDTH)/2,(int)(width.getHeight()-HEIGHT)/2);
+
+                add(jpl);
+                setTitle("游戏界面");
+                setSize(WIDTH,HEIGHT);
+                setVisible(true);
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+                //关闭等待界面
+                waitingRunnable.stop();
+                try
+                {
+                    //初始化单词
+                    initialWord();
+                }
+                catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }).start();
         timer.start();
-        Thread.sleep(3000);
-        initialWord();
+        wordText.addActionListener(this);
     }
 
     //初始化单词位置及信息
@@ -102,6 +132,26 @@ public class GameFrame extends JFrame implements ActionListener
         wordLabel.setLocation(gamePanel.getWidth()/2,wordY);
 
         System.out.println(myName+"当前单词为："+word.getWord());
+    }
+
+    void match(){
+        boolean isOver = false;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    sc=new SocketClient(myName);
+//                    isOver =sc.matchRequest();
+                    partnerName=sc.getpUsername();
+                }
+                catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     //显示本局结果
@@ -194,6 +244,7 @@ public class GameFrame extends JFrame implements ActionListener
 
             //释放当前窗口资源
             this.dispose();
+            timer.stop();
         }
         catch (Exception e) {
             e.printStackTrace();

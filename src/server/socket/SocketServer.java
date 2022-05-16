@@ -51,6 +51,7 @@ public class SocketServer
             socket1=ss.accept();
             socket2=ss.accept();
             //传出两个客户端，让它们匹配一场游戏
+            System.out.println("匹配成功一对");
             new Thread(new GameRunnable(socket1,socket2)).start();
         }
     }
