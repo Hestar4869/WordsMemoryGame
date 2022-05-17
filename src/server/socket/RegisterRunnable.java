@@ -9,27 +9,27 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * @className: LoginServerRunnable
- * @description: 处理登录请求的服务器进程
+ * @className: RegisterRunnable
+ * @description: TODO 类描述
  * @author: HMX
- * @date: 2022-05-05 14:49
+ * @date: 2022-05-17 16:05
  */
-public class LoginServerRunnable implements Runnable
+public class RegisterRunnable implements Runnable
 {
-    private ServerSocket loginServer;
+    ServerSocket ss;
 
-    LoginServerRunnable() throws IOException
+    public RegisterRunnable() throws IOException
     {
-        loginServer=new ServerSocket(17775);
-
+        this.ss =new ServerSocket(17779);
     }
+
     @Override
     public void run()
     {
         while(true){
             try
             {
-                Socket socket=loginServer.accept();
+                Socket socket=ss.accept();
                 //输入流
                 InputStream is=socket.getInputStream();
                 BufferedReader br=new BufferedReader(new InputStreamReader(is));
@@ -41,16 +41,15 @@ public class LoginServerRunnable implements Runnable
                 String username=br.readLine(),passwd= br.readLine();
 
                 UserDAO userDAO=new UserDAOImpl();
-                if(userDAO.findPasswordByUsername(username).equals(passwd))
-                    ps.println("succeed");
-                else
-                    ps.println("failed");
+                userDAO.insert(new User(username,passwd));
+                ps.println("succeed");
 
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
+
         }
     }
 }

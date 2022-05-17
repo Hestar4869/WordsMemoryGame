@@ -26,6 +26,7 @@ public class LoginFrame extends JFrame implements ActionListener
     private JLabel passwdLabel = new JLabel("输入密码");
     private JPasswordField passwdText = new JPasswordField(20);
 
+    private JButton registerButton=new JButton("注册");
     private JButton loginButton = new JButton("登录");
     private JButton exitButton = new JButton("取消");
 
@@ -48,6 +49,7 @@ public class LoginFrame extends JFrame implements ActionListener
         exitButton.addActionListener(this);
         gameButton.addActionListener(this);
         wordButton.addActionListener(this);
+        registerButton.addActionListener(this);
 
         //初始化登录面板
         textPanel.setLayout(flowLayout);
@@ -61,6 +63,7 @@ public class LoginFrame extends JFrame implements ActionListener
         buttonPanel.setLayout(flowLayout);
         buttonPanel.add(loginButton);
         buttonPanel.add(exitButton);
+        buttonPanel.add(registerButton);
 
         loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
 
@@ -152,6 +155,12 @@ public class LoginFrame extends JFrame implements ActionListener
                 WordMemoryFrame wordMemoryFrame=new WordMemoryFrame(username);
                 //释放当前窗口资源
                 this.dispose();
+            }
+            else if(e.getSource()==registerButton){
+                //获取登录账号
+                String username = userText.getText(), passwd = String.valueOf(passwdText.getPassword());
+                SocketClient.registerRequest(username,passwd);
+                JOptionPane.showMessageDialog(this,"注册成功");
             }
         }
         catch (Exception exception)

@@ -67,6 +67,7 @@ public class GameRunnable implements Runnable
         EnglishWordDAO DAO = new EnglishWordDAOImpl();
         //根据随机id查询单词
         EnglishWord word = DAO.findWordById(id);
+        System.out.println("发送单词"+word.getWord());
         oos1.writeObject(word);
         oos2.writeObject(word);
     }
@@ -85,12 +86,14 @@ public class GameRunnable implements Runnable
                         String msg = br1.readLine();
                         if (msg.equals("word"))
                         {
+
                             //传送随机单词
                             sendRandomWord();
                         }
                         else if (msg.equals("over"))
                         {
                             //游戏结束
+                            oos2.writeObject(new EnglishWord("zzz","zzz"));
                             socket1.shutdownOutput();
                             socket2.shutdownOutput();
                             break;
@@ -125,6 +128,7 @@ public class GameRunnable implements Runnable
                         else if (msg.equals("over"))
                         {
                             //游戏结束
+                            oos1.writeObject(new EnglishWord("zzz","zzz"));
                             socket1.shutdownOutput();
                             socket2.shutdownOutput();
                             break;

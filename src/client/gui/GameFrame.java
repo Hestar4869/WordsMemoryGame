@@ -113,13 +113,14 @@ public class GameFrame extends JFrame implements ActionListener
                 {
                     //初始化单词
                     initialWord();
+                    timer.start();
                 }
                 catch (Exception exception) {
                     exception.printStackTrace();
                 }
             }
         }).start();
-        timer.start();
+
         wordText.addActionListener(this);
     }
 
@@ -127,6 +128,9 @@ public class GameFrame extends JFrame implements ActionListener
     void initialWord() throws Exception
     {
         word= sc.getWord();
+        //若单词为zzz，则说明另一客户端游戏结束
+        if(word.getWord().equals("zzz")&&word.getWordDes().equals("zzz"))
+            gameOver(false);
         wordLabel.setText(word.getWordDes());
         wordY=0;
         wordLabel.setLocation(gamePanel.getWidth()/2,wordY);
@@ -233,6 +237,12 @@ public class GameFrame extends JFrame implements ActionListener
         }
     }
     void gameOver(boolean isFailed){
+        timer.stop();
+        //输的一方需要首先发送结束请求
+        if (isFailed==true){
+            sc.endGameRequest();
+        }
+
         try
         {
             //保存数据到服务器

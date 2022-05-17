@@ -17,14 +17,14 @@ public class SocketServer
 
     private SocketServer(){
 
-        try
-
-        {
+        try {
             //开启处理登录信息的线程
             new Thread(new LoginServerRunnable()).start();
             //开启处理单词记忆功能的线程
             new Thread(new UpdateMemoryRunnable()).start();
             new Thread(new SendMemoryRunnable()).start();
+            //开启注册功能
+            new Thread(new RegisterRunnable()).start();
             //匹配游戏
             matchSocket();
         }

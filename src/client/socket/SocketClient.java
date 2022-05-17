@@ -57,7 +57,8 @@ public class SocketClient
     {
 
         ps.println("word");
-        EnglishWord word = (EnglishWord) ois.readObject();
+        EnglishWord word;
+        word= (EnglishWord) ois.readObject();
         return word;
     }
 
@@ -67,7 +68,7 @@ public class SocketClient
     }
 
     //主动结束游戏
-    public void endGame(){
+    public void endGameRequest(){
         ps.println("over");
     }
 
@@ -140,6 +141,30 @@ public class SocketClient
         //传送List对象
         oos.writeObject(memories);
     }
+
+    //传入账号密码，进行注册
+    public static boolean registerRequest(String username,String passwd) throws Exception
+    {
+        Socket registerSocket = new Socket("127.0.0.1", 17779);
+        //输入流
+        InputStream is = registerSocket.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        //输出流
+        OutputStream os = registerSocket.getOutputStream();
+        PrintStream ps = new PrintStream(os);
+
+        //传送账号密码
+        ps.println(username);
+        ps.println(passwd);
+
+        //读取信息
+        String info = br.readLine();
+        if (info.equals("succeed"))
+        {
+            System.out.println("注册成功");
+        }
+        return true;
+    }
     public static void main(String[] args) throws Exception
     {
 
@@ -150,22 +175,8 @@ public class SocketClient
 //        Thread.sleep(1000);
 //        SocketClient.loginRequest("root","root");
 //        SocketClient.memoryRequest("root",true)
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-//                    SocketClient.matchRequest("hmx");
-                }
-                catch (Exception exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        }).start();
 
+        SocketClient.registerRequest("hmx","hmx");
 //        SocketClient.matchRequest("cjq");
     }
 }
