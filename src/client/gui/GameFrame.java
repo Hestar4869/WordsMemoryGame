@@ -138,26 +138,6 @@ public class GameFrame extends JFrame implements ActionListener
         System.out.println(myName+"当前单词为："+word.getWord());
     }
 
-    void match(){
-        boolean isOver = false;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    sc=new SocketClient(myName);
-//                    isOver =sc.matchRequest();
-                    partnerName=sc.getpUsername();
-                }
-                catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
     //显示本局结果
     void showMessage(int opt)
     {

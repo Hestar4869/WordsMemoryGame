@@ -3,8 +3,10 @@ package client.socket;
 import server.database.data.EnglishWord;
 import server.database.data.Memory;
 
+import javax.xml.stream.events.EndDocument;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,8 +23,8 @@ public class SocketClient
     private BufferedReader br = null;
     private PrintStream ps = null;
     private ObjectInputStream ois = null;
-
-
+    private List<EnglishWord> words=new ArrayList<>();
+    private int index=-1;
 
     public SocketClient(String mUsername) throws Exception
     {
@@ -58,7 +60,21 @@ public class SocketClient
 
         ps.println("word");
         EnglishWord word;
-        word= (EnglishWord) ois.readObject();
+
+        do
+        {
+            word=(EnglishWord) ois.readObject();
+            if(word.getWord().equals("zzz")&&word.getWordDes().equals("zzz"))
+            {
+                index=words.size()-1;
+                System.out.println("当前index为"+index);
+            }
+
+            words.add(word);
+            System.out.println("当前数据长度"+words.size());
+        }while (socket.getInputStream().available()!=0);
+        index++;
+        word= words.get(index);
         return word;
     }
 

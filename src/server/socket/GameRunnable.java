@@ -93,6 +93,7 @@ public class GameRunnable implements Runnable
                         else if (msg.equals("over"))
                         {
                             //游戏结束
+                            System.out.println("over");
                             oos2.writeObject(new EnglishWord("zzz","zzz"));
                             socket1.shutdownOutput();
                             socket2.shutdownOutput();
@@ -128,6 +129,7 @@ public class GameRunnable implements Runnable
                         else if (msg.equals("over"))
                         {
                             //游戏结束
+                            System.out.println("over");
                             oos1.writeObject(new EnglishWord("zzz","zzz"));
                             socket1.shutdownOutput();
                             socket2.shutdownOutput();
