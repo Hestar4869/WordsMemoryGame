@@ -60,7 +60,8 @@ public class SocketClient
 
         ps.println("word");
         EnglishWord word;
-
+        if(words.size()==0)
+            Thread.sleep(1000);
         do
         {
             word=(EnglishWord) ois.readObject();
